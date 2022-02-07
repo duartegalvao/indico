@@ -88,7 +88,7 @@ EditableList.defaultProps = {
   management: true,
 };
 
-function EditableListDisplay({
+export function EditableListDisplay({
   initialContribList,
   codePresent,
   editableType,

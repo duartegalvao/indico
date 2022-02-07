@@ -7,7 +7,7 @@
 
 import assignMyselfURL from 'indico-url:event_editing.api_assign_editable_self';
 import fileTypesURL from 'indico-url:event_editing.api_file_types';
-import editableListURL from 'indico-url:event_editing.api_filter_editables_by_filetypes';
+import editableListURL from 'indico-url:event_editing.api_editable_list';
 
 import _ from 'lodash';
 import PropTypes from 'prop-types';
@@ -24,6 +24,7 @@ import {fileTypePropTypes} from '../../editing/timeline/FileManager/util';
 import {EditableType, GetNextEditableTitles} from '../../models';
 
 import './NextEditable.module.scss';
+import { EditableListDisplay } from './EditableList';
 
 export default function NextEditable({eventId, editableType, onClose, management}) {
   const {data: fileTypes, loading: isLoadingFileTypes} = useIndicoAxios({
@@ -31,8 +32,13 @@ export default function NextEditable({eventId, editableType, onClose, management
     camelize: true,
     trigger: [eventId, editableType],
   });
+  const {data: contribList, loading: isLoadingContribList} = useIndicoAxios({
+    url: editableListURL({event_id: eventId, type: editableType}),
+    camelize: true,
+    trigger: [eventId, editableType],
+  });
 
-  if (isLoadingFileTypes) {
+  if (isLoadingFileTypes || isLoadingContribList) {
     return <Loader active />;
   } else if (!fileTypes) {
     return null;
@@ -44,6 +50,7 @@ export default function NextEditable({eventId, editableType, onClose, management
       editableType={editableType}
       onClose={onClose}
       fileTypes={fileTypes}
+      contribList={contribList}
       management={management}
     />
   );
@@ -56,14 +63,14 @@ NextEditable.propTypes = {
   management: PropTypes.bool.isRequired,
 };
 
-function NextEditableDisplay({eventId, editableType, onClose, fileTypes, management}) {
+function NextEditableDisplay({eventId, editableType, onClose, fileTypes, contribList, management}) {
   const [filters, setFilters] = useState({});
   const [filteredEditables, setFilteredEditables] = useState(null);
   const [selectedEditable, setSelectedEditable] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  useEffect(() => {
+  /*useEffect(() => {
     (async () => {
       setSelectedEditable(null);
       setLoading(true);
@@ -84,7 +91,7 @@ function NextEditableDisplay({eventId, editableType, onClose, fileTypes, managem
       setFilteredEditables(camelizeKeys(response.data));
       setLoading(false);
     })();
-  }, [eventId, editableType, filters]);
+  }, [eventId, editableType, filters]);*/
 
   const updatePresenceFilter = (id, present) => {
     if (filters[id] === present) {
@@ -185,10 +192,19 @@ function NextEditableDisplay({eventId, editableType, onClose, fileTypes, managem
           })}
         </div>
         <Dimmer.Dimmable styleName="filtered-editables" dimmed={loading}>
-          <NextEditableTable
+          {/*<NextEditableTable
             filteredEditables={filteredEditables}
             selectedEditable={selectedEditable}
             setSelectedEditable={setSelectedEditable}
+          />*/}
+          <EditableListDisplay
+            initialContribList={contribList}
+            codePresent={false}
+            editableType={editableType}
+            eventId={eventId}
+            editors={[]}
+            management={false}
+            canAssignSelf={true}
           />
           <Dimmer active={loading} inverted>
             <Loader />
@@ -212,6 +228,7 @@ NextEditableDisplay.propTypes = {
   editableType: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   fileTypes: PropTypes.arrayOf(PropTypes.shape(fileTypePropTypes)).isRequired,
+  contribList: PropTypes.arrayOf(PropTypes.object).isRequired,
   management: PropTypes.bool.isRequired,
 };
 
