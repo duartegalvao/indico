@@ -19,6 +19,7 @@ from indico.modules.events.contributions.models.fields import ContributionField
 from indico.modules.events.models.events import EventType
 from indico.modules.events.settings import EventSettingsProxy
 from indico.util.i18n import _, ngettext
+from indico.util.placeholders import Placeholder
 from indico.web.flask.util import url_for
 from indico.web.menu import SideMenuItem
 
@@ -126,6 +127,15 @@ def _extend_event_menu(sender, **kwargs):
 def _event_created(event, **kwargs):
     if event.type_ == EventType.conference:
         contribution_settings.set(event, 'published', False)
+
+
+@signals.core.get_placeholders.connect_via('contribution-email')
+def _get_contribution_placeholders(sender, **kwargs):
+    from indico.modules.events.contributions import placeholders
+    for name in placeholders.__all__:
+        obj = getattr(placeholders, name)
+        if issubclass(obj, Placeholder):
+            yield obj
 
 
 contribution_settings = EventSettingsProxy('contributions', {
