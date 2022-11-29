@@ -93,13 +93,13 @@
                         data-update='{"html": "#contribution-list", "filter_statistics": "#filter-statistics"}'>
                     {%- trans %}Remove{% endtrans -%}
                 </button>
-                <button class="i-button icon-users js-enable-if-checked disabled"
-                        data-title="{% trans %}Author list{% endtrans %}"
-                        data-href="{{ url_for('contributions.person_list', event) }}"
-                        data-params-selector="#contribution-list input[name=contribution_id]:checked"
-                        data-method="POST"
-                        data-ajax-dialog>
-                    {%- trans %}Author list{% endtrans -%}
+                <div id="email-authors"
+                     data-event-id="{{ event.id }}"
+                     data-params-selector="#contribution-list input[name=contribution_id]:checked">
+                </div>
+                <button id="email-authors-trigger"
+                        class="i-button icon-users js-enable-if-checked disabled">
+                    {%- trans %}Email authors{% endtrans -%}
                 </button>
                 <button class="i-button icon-attachment js-enable-if-checked js-submit-form disabled"
                         data-href="{{ url_for('.material_package', event) }}">
@@ -203,5 +203,6 @@
             createTrackURL: {{ url_for('tracks.create_track', event) | tojson }},
             timetableRESTURL: {{ url_for('timetable.timetable_rest', event, _method='POST') | tojson }}
         });
+        setupEmailAuthorsButton('contribution', '#email-authors', '#email-authors-trigger');
     </script>
 {% endblock %}

@@ -162,13 +162,13 @@
                     </ul>
                 </div>
                 <div class="group">
-                    <button class="i-button icon-users js-requires-selected-row disabled"
-                            data-title="{% trans %}Author list{% endtrans %}"
-                            data-href="{{ url_for('.person_list', event) }}"
-                            data-params-selector="#abstract-list input[name=abstract_id]:checked"
-                            data-method="POST"
-                            data-ajax-dialog>
-                        {%- trans %}Author list{% endtrans -%}
+                    <div id="email-authors"
+                         data-event-id="{{ event.id }}"
+                         data-params-selector="#abstract-list input[name=abstract_id]:checked">
+                    </div>
+                    <button id="email-authors-trigger"
+                            class="i-button icon-users js-requires-selected-row disabled">
+                        {%- trans %}Email authors{% endtrans -%}
                     </button>
                 </div>
                 {% if can_download_attachments %}
@@ -245,5 +245,6 @@
         setupAbstractJudgment({
             trackSessionMap: {{ track_session_map|tojson }}
         });
+        setupEmailAuthorsButton('abstract', '#email-authors', '#email-authors-trigger');
     </script>
 {% endblock %}
