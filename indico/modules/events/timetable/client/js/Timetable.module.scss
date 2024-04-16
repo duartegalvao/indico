@@ -69,6 +69,8 @@
 
     &.selected {
       filter: brightness(0.8);
+      box-shadow: 0 0 10px 0 $indico-blue;
+      outline: 1px solid $indico-blue;
     }
 
     &.child-entry {
@@ -79,6 +81,16 @@
 
       &.selected {
         filter: opacity(0.9) brightness(0.95);
+        box-shadow: 4px 0 18px -2px $indico-blue;
+        margin-left: 2px;
+        z-index: 0;
+        border-color: $indico-blue !important;
+        outline: none !important;
+
+        &.parent-entry-selected {
+          box-shadow: 0 0 5px 0 $indico-blue;
+          outline: none !important;
+        }
       }
     }
   }

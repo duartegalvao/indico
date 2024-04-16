@@ -27,6 +27,7 @@ export const entryStyleGetter = (entries, selected) => entry => {
       className: toClasses({
         [styles['child-entry']]: true,
         [styles.selected]: selected && (selected.id === entry.id || selected.id === parent?.id),
+        [styles['parent-entry-selected']]: selected?.id === parent?.id,
       }),
     };
   }
