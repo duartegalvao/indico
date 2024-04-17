@@ -82,4 +82,8 @@
       }
     }
   }
+
+  :global(.rbc-addons-dnd-drag-preview) {
+    cursor: grabbing;
+  }
 }
