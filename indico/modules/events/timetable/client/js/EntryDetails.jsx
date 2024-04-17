@@ -227,7 +227,6 @@ export default function EntryDetails() {
           link
         />
         <Header
-          size="small"
           color="blue"
           icon={entryIcons[type]}
           content={formatTitle(title, code)}

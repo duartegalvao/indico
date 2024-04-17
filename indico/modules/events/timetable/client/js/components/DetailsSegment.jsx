@@ -27,7 +27,7 @@ function ActionIcon({icon, onClick, title, color}) {
     <Icon
       name={icon}
       onClick={onClick}
-      style={{color: color?.text || 'rgba(0, 0, 0, 0.6)'}}
+      style={{color: color?.text || 'rgba(0, 0, 0, 0.6)', fontSize: 15}}
       title={title}
       link
     />
@@ -57,7 +57,7 @@ export default function DetailsSegment({
   return (
     <Segment style={{borderColor: color?.background}} {...rest}>
       <Label
-        style={{backgroundColor: color?.background, color: color?.text}}
+        style={{backgroundColor: color?.background, color: color?.text, fontSize: 15}}
         styleName="segment-header"
         attached="top"
       >
