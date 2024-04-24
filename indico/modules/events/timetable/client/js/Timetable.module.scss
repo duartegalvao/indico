@@ -69,8 +69,8 @@
 
     &.selected {
       filter: brightness(0.8);
-      box-shadow: 2px 0 6px 0 $indico-blue;
-      outline: 1px solid $indico-blue;
+      box-shadow: 0.1em 0 0.3em 0.1em $indico-blue;
+      outline: 0.1em solid $indico-blue;
     }
 
     &.child-entry {
@@ -81,16 +81,14 @@
 
       &.selected {
         filter: opacity(0.9) brightness(0.95);
-        box-shadow: 4px 0 18px -2px $indico-blue;
-        margin-left: 4px;
+        box-shadow: -0.1em 0 1em 0.2em $indico-blue;
+        margin-left: 0.2em;
         z-index: 0;
-        border-color: $indico-blue !important;
-        outline: none !important;
 
         &.parent-entry-selected {
           box-shadow: none;
           outline: none;
-          margin-left: 4px;
+          margin-left: 0.2em;
         }
       }
     }
