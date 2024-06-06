@@ -18,7 +18,13 @@ import {getDetails} from './selectors';
 
 import './CommentForm.module.scss';
 
-export default function CommentForm({onSubmit, onToggleExpand, initialValues, expanded}) {
+export default function CommentForm({
+  onSubmit,
+  onToggleExpand,
+  initialValues,
+  expanded,
+  extraActions,
+}) {
   const {canCreateInternalComments} = useSelector(getDetails);
   const [commentFormVisible, setCommentFormVisible] = useState(expanded);
 
@@ -77,6 +83,7 @@ export default function CommentForm({onSubmit, onToggleExpand, initialValues, ex
                       fprops.form.reset();
                     }}
                   />
+                  {extraActions}
                 </Form.Group>
               </>
             )}
@@ -95,6 +102,7 @@ CommentForm.propTypes = {
     internal: PropTypes.bool,
   }),
   expanded: PropTypes.bool,
+  extraActions: PropTypes.node,
 };
 
 CommentForm.defaultProps = {
@@ -103,4 +111,5 @@ CommentForm.defaultProps = {
     internal: false,
   },
   expanded: false,
+  extraActions: null,
 };

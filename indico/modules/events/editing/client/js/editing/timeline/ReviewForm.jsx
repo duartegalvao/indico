@@ -8,6 +8,7 @@
 import submitRevisionURL from 'indico-url:event_editing.api_create_submitter_revision';
 
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,6 +18,7 @@ import EditableSubmissionButton from 'indico/modules/events/editing/editing/Edit
 import UserAvatar from 'indico/modules/events/reviewing/components/UserAvatar';
 import {FinalCheckbox, FinalSubmitButton, FinalTextArea} from 'indico/react/forms';
 import {Translate} from 'indico/react/i18n';
+import {toClasses} from 'indico/react/util';
 import {indicoAxios} from 'indico/utils/axios';
 
 import {EditingReviewAction} from '../../models';
@@ -67,6 +69,30 @@ const judgmentOptions = [
   },
 ];
 
+function JudgmentDropdown({setJudgmentType, right, ...rest}) {
+  return (
+    <div className={toClasses({'review-trigger': true, 'flexrow': true, right})}>
+      <span className="comment-or-review">
+        <Translate>or</Translate>
+      </span>
+      <Dropdown text={Translate.string('Judge')} direction="left" button floating {...rest}>
+        <Dropdown.Menu>
+          <JudgmentDropdownItems options={judgmentOptions} setJudgmentType={setJudgmentType} />
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+  );
+}
+
+JudgmentDropdown.propTypes = {
+  setJudgmentType: PropTypes.func.isRequired,
+  right: PropTypes.bool,
+};
+
+JudgmentDropdown.defaultProps = {
+  right: false,
+};
+
 export default function ReviewForm() {
   const dispatch = useDispatch();
   const lastRevision = useSelector(getLastRevision);
@@ -83,8 +109,14 @@ export default function ReviewForm() {
 
   const [commentFormVisible, setCommentFormVisible] = useState(false);
   const [judgmentType, setJudgmentType] = useState(null);
+  const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const files = getFilesFromRevision(fileTypes, lastRevisionWithFiles);
+
+  const setJudgmentTypeAndComment = currentComment => action => {
+    setComment(currentComment);
+    setJudgmentType(action);
+  };
 
   const createComment = async (formData, form) => {
     const rv = await dispatch(createRevisionComment(lastRevision.createCommentURL, formData));
@@ -107,7 +139,28 @@ export default function ReviewForm() {
 
   const judgmentForm = (
     <div className="flexrow f-a-center" styleName="judgment-form">
-      <CommentForm onSubmit={createComment} onToggleExpand={setCommentFormVisible} />
+      <CommentForm
+        onSubmit={createComment}
+        onToggleExpand={visible => {
+          if (!visible) {
+            setComment('');
+          }
+          setCommentFormVisible(visible);
+        }}
+        initialValues={{text: comment}}
+        extraActions={
+          canJudge ? (
+            <Field name="text" subscription={{value: true}}>
+              {({input: {value: currentComment}}) => (
+                <JudgmentDropdown
+                  setJudgmentType={setJudgmentTypeAndComment(currentComment)}
+                  right
+                />
+              )}
+            </Field>
+          ) : null
+        }
+      />
       {canPerformSubmitterActions && canReview && !editor && (
         <>
           <span className="comment-or-review">
@@ -125,22 +178,7 @@ export default function ReviewForm() {
         </>
       )}
       {!commentFormVisible && canJudge && (
-        <div className="review-trigger flexrow">
-          <span className="comment-or-review">
-            <Translate>or</Translate>
-          </span>
-          <Dropdown
-            className="judgment-btn"
-            text={Translate.string('Judge')}
-            direction="left"
-            button
-            floating
-          >
-            <Dropdown.Menu>
-              <JudgmentDropdownItems options={judgmentOptions} setJudgmentType={setJudgmentType} />
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+        <JudgmentDropdown setJudgmentType={setJudgmentType} className="judgment-btn" />
       )}
     </div>
   );
@@ -168,30 +206,33 @@ export default function ReviewForm() {
       <UserAvatar user={currentUser} />
       <div className="i-timeline-item-box footer-only header-indicator-left">
         <div className="i-box-footer" style={{overflow: 'visible'}}>
-          {!judgmentType && judgmentForm}
-          <FinalForm
-            initialValues={{
-              comment: '',
-              tags: lastRevision.tags
-                .filter(t => !t.system)
-                .map(t => t.id)
-                .sort(),
-              files,
-              upload_changes: false,
-            }}
-            initialValuesEqual={_.isEqual}
-            subscription={{}}
-            onSubmit={handleReview}
-          >
-            {({handleSubmit}) =>
-              judgmentType && (
+          {judgmentType ? (
+            <FinalForm
+              initialValues={{
+                comment,
+                tags: lastRevision.tags
+                  .filter(t => !t.system)
+                  .map(t => t.id)
+                  .sort(),
+                files,
+                upload_changes: false,
+              }}
+              initialValuesEqual={_.isEqual}
+              subscription={{}}
+              onSubmit={handleReview}
+            >
+              {({handleSubmit}) => (
                 <Form id="judgment-form" onSubmit={handleSubmit}>
-                  <JudgmentBoxHeader
-                    judgmentType={judgmentType}
-                    setJudgmentType={setJudgmentType}
-                    options={judgmentOptions}
-                    loading={loading}
-                  />
+                  <Field name="comment" subscription={{value: true}}>
+                    {({input: {value: currentComment}}) => (
+                      <JudgmentBoxHeader
+                        judgmentType={judgmentType}
+                        setJudgmentType={setJudgmentTypeAndComment(currentComment)}
+                        options={judgmentOptions}
+                        loading={loading}
+                      />
+                    )}
+                  </Field>
                   <Field name="upload_changes" subscription={{value: true}}>
                     {({input: {value: uploadChanges}}) => (
                       <UpdateFilesBox
@@ -228,13 +269,15 @@ export default function ReviewForm() {
                   <div styleName="judgment-submit-button">
                     <FinalSubmitButton
                       label={Translate.string('Judge')}
-                      disabledUntilChange={judgmentType !== EditingReviewAction.accept}
+                      disabledUntilChange={judgmentType !== EditingReviewAction.accept && !comment}
                     />
                   </div>
                 </Form>
-              )
-            }
-          </FinalForm>
+              )}
+            </FinalForm>
+          ) : (
+            judgmentForm
+          )}
         </div>
       </div>
     </div>
