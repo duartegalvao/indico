@@ -26,6 +26,8 @@ Improvements
 - Take session program codes into account when sorting parallel sessions with the same start time
   in meeting timetable (:pr:`6575`)
 - Enforce browser-side caching of event logos and custom stylesheets (:issue:`6555`, :pr:`6559`)
+- Allow setting placeholders for text fields in receipt templates (:pr:`6587`)
+- Add a new receipt template for Certificates of Attendance (:pr:`6587`)
 
 Bugfixes
 ^^^^^^^^
