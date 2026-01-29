@@ -11,11 +11,10 @@ import tagsURL from 'indico-url:event_editing.api_tags';
 
 import React from 'react';
 
+import {TagManager} from 'indico/react/components';
 import {useIndicoAxios} from 'indico/react/hooks';
 import {Translate} from 'indico/react/i18n';
 import {handleAxiosError, indicoAxios} from 'indico/utils/axios';
-
-import TagManager from './TagManager';
 
 interface TagFormData {
   code: string;
