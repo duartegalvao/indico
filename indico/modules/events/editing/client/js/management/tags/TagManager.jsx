@@ -5,19 +5,13 @@
 // modify it under the terms of the MIT License; see the
 // LICENSE file for more details.
 
-import createTagURL from 'indico-url:event_editing.api_create_tag';
-import editTagURL from 'indico-url:event_editing.api_edit_tag';
-import tagsURL from 'indico-url:event_editing.api_tags';
-
 import PropTypes from 'prop-types';
 import React, {useReducer} from 'react';
 import {Button, Icon, Label, Loader, Message, Segment, Popup} from 'semantic-ui-react';
 
 import {RequestConfirmDelete} from 'indico/react/components';
 import {getChangedValues, handleSubmitError} from 'indico/react/forms';
-import {useIndicoAxios} from 'indico/react/hooks';
 import {Param, Translate} from 'indico/react/i18n';
-import {handleAxiosError, indicoAxios} from 'indico/utils/axios';
 
 import TagModal from './TagModal';
 
@@ -43,49 +37,40 @@ function tagsReducer(state, action) {
   }
 }
 
-export default function TagManager({eventId}) {
+export default function TagManager({
+  tags,
+  loading,
+  onCreateTag,
+  onEditTag,
+  onDeleteTag,
+  editTagLabel,
+  deleteTagLabel,
+  addTagLabel,
+  createTagLabel,
+  noTagsMessage,
+  canEditTag,
+  editDisabledReason,
+  confirmDeleteText,
+}) {
   const [state, dispatch] = useReducer(tagsReducer, initialState);
-  const {
-    data,
-    loading: isLoadingTags,
-    reFetch,
-    lastData,
-  } = useIndicoAxios(tagsURL({event_id: eventId}), {camelize: true});
 
   const createTag = async formData => {
     try {
-      await indicoAxios.post(createTagURL({event_id: eventId}), formData);
-      reFetch();
+      await onCreateTag(formData);
     } catch (e) {
       return handleSubmitError(e);
     }
   };
 
   const editTag = async (tagId, tagData) => {
-    const url = editTagURL({event_id: eventId, tag_id: tagId});
-
     try {
-      await indicoAxios.patch(url, tagData);
-      reFetch();
+      await onEditTag(tagId, tagData);
     } catch (e) {
       return handleSubmitError(e);
     }
   };
 
-  const deleteTag = async tagId => {
-    const url = editTagURL({event_id: eventId, tag_id: tagId});
-
-    try {
-      await indicoAxios.delete(url);
-      reFetch();
-    } catch (e) {
-      handleAxiosError(e);
-      return true;
-    }
-  };
-
-  const tags = data || lastData;
-  if (isLoadingTags && !lastData) {
+  if (loading) {
     return <Loader inline="centered" active />;
   } else if (!tags) {
     return null;
@@ -101,16 +86,16 @@ export default function TagManager({eventId}) {
             <Popup
               on="hover"
               position="right center"
-              disabled={!tag.system}
+              disabled={canEditTag(tag) || !editDisabledReason}
               trigger={
                 <span>
                   <Icon
                     name="pencil"
                     color="grey"
                     size="small"
-                    title={Translate.string('Edit tag')}
+                    title={editTagLabel}
                     onClick={() => dispatch({type: 'EDIT_TAG', tag})}
-                    disabled={tag.system}
+                    disabled={!canEditTag(tag)}
                     circular
                     inverted
                   />{' '}
@@ -118,43 +103,31 @@ export default function TagManager({eventId}) {
                     name="remove"
                     color="red"
                     size="small"
-                    title={Translate.string('Delete tag')}
+                    title={deleteTagLabel}
                     onClick={() => dispatch({type: 'DELETE_TAG', tag})}
-                    disabled={tag.system}
+                    disabled={!canEditTag(tag)}
                     circular
                     inverted
                   />
                 </span>
               }
-            >
-              <Translate>
-                System tags are managed by the editing workflow service and cannot be modified.
-              </Translate>
-            </Popup>
+              content={editDisabledReason}
+            />
           </div>
         </Segment>
       ))}
-      {tags.length === 0 && (
-        <Message info>
-          <Translate>There are no tags defined for this event</Translate>
-        </Message>
-      )}
+      {tags.length === 0 && <Message info content={noTagsMessage} />}
       <Button
         onClick={() => dispatch({type: 'ADD_TAG'})}
         disabled={!!operation}
         floated="right"
-        icon
+        icon="plus"
+        content={addTagLabel}
         primary
-      >
-        <Icon name="plus" /> <Translate>Add new tag</Translate>
-      </Button>
+      />
       {['add', 'edit'].includes(operation) && (
         <TagModal
-          header={
-            operation === 'edit'
-              ? Translate.string('Edit tag')
-              : Translate.string('Create a new tag')
-          }
+          header={operation === 'edit' ? editTagLabel : createTagLabel}
           onSubmit={async (formData, form) => {
             if (operation === 'edit') {
               return await editTag(currentTag.id, getChangedValues(formData, form));
@@ -168,20 +141,45 @@ export default function TagManager({eventId}) {
       )}
       <RequestConfirmDelete
         onClose={() => dispatch({type: 'CLEAR'})}
-        requestFunc={() => deleteTag(currentTag.id)}
+        requestFunc={() => onDeleteTag(currentTag.id)}
         open={operation === 'delete'}
       >
-        {currentTag && (
-          <Translate>
-            Are you sure you want to delete the tag{' '}
-            <Param name="tag" value={currentTag.verboseTitle} wrapper={<strong />} />?
-          </Translate>
-        )}
+        {currentTag && confirmDeleteText(currentTag)}
       </RequestConfirmDelete>
     </div>
   );
 }
 
 TagManager.propTypes = {
-  eventId: PropTypes.number.isRequired,
+  tags: PropTypes.array,
+  loading: PropTypes.bool,
+  onCreateTag: PropTypes.func.isRequired,
+  onEditTag: PropTypes.func.isRequired,
+  onDeleteTag: PropTypes.func.isRequired,
+  editTagLabel: PropTypes.string,
+  deleteTagLabel: PropTypes.string,
+  addTagLabel: PropTypes.string,
+  createTagLabel: PropTypes.string,
+  noTagsMessage: PropTypes.string,
+  canEditTag: PropTypes.func,
+  editDisabledReason: PropTypes.string,
+  confirmDeleteText: PropTypes.func,
+};
+
+TagManager.defaultProps = {
+  tags: null,
+  loading: false,
+  editTagLabel: Translate.string('Edit tag'),
+  deleteTagLabel: Translate.string('Delete tag'),
+  addTagLabel: Translate.string('Add new tag'),
+  createTagLabel: Translate.string('Create a new tag'),
+  noTagsMessage: Translate.string('There are no tags defined for this event'),
+  canEditTag: () => true,
+  editDisabledReason: '',
+  confirmDeleteText: tag => (
+    <Translate>
+      Are you sure you want to delete the tag{' '}
+      <Param name="tag" value={tag.verboseTitle} wrapper={<strong />} />?
+    </Translate>
+  ),
 };

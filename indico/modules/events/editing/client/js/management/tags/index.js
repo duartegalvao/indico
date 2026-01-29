@@ -13,7 +13,7 @@ import {ManagementPageBackButton, ManagementPageSubTitle} from 'indico/react/com
 import {Translate} from 'indico/react/i18n';
 import {useNumericParam} from 'indico/react/util/routing';
 
-import TagManager from './TagManager';
+import EditingTagManager from './EditingTagManager';
 
 export default function EditingTagManagement() {
   const eventId = useNumericParam('event_id');
@@ -21,7 +21,7 @@ export default function EditingTagManagement() {
     <>
       <ManagementPageBackButton url={dashboardURL({event_id: eventId})} />
       <ManagementPageSubTitle title={Translate.string('Tags')} />
-      <TagManager eventId={eventId} />
+      <EditingTagManager eventId={eventId} />
     </>
   );
 }
