@@ -25,7 +25,7 @@ const availableColors = Object.keys(SUIPalette).map(colorName => ({
   value: colorName,
 }));
 
-export default function TagModal({header, onSubmit, tag, onClose}) {
+export default function TagModal({header, onSubmit, tag, onClose, hasColors, extraFields}) {
   const handleSubmit = async (formData, form) => {
     const error = await onSubmit(formData, form);
     if (error) {
@@ -44,14 +44,17 @@ export default function TagModal({header, onSubmit, tag, onClose}) {
     >
       <FinalInput name="code" label={Translate.string('Code')} required autoFocus />
       <FinalInput name="title" label={Translate.string('Title')} required />
-      <FinalDropdown
-        name="color"
-        label={Translate.string('Color')}
-        options={availableColors}
-        search={null}
-        selection
-        required
-      />
+      {hasColors && (
+        <FinalDropdown
+          name="color"
+          label={Translate.string('Color')}
+          options={availableColors}
+          search={null}
+          selection
+          required
+        />
+      )}
+      {extraFields}
     </FinalModalForm>
   );
 }
@@ -61,6 +64,8 @@ TagModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   tag: PropTypes.object,
   onClose: PropTypes.func,
+  hasColors: PropTypes.bool,
+  extraFields: PropTypes.node,
 };
 
 TagModal.defaultProps = {
@@ -70,4 +75,6 @@ TagModal.defaultProps = {
     color: null,
   },
   onClose: null,
+  hasColors: true,
+  extraFields: null,
 };

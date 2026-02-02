@@ -7,6 +7,7 @@
 
 import PropTypes from 'prop-types';
 import React, {useReducer} from 'react';
+import ReactDOM from 'react-dom';
 import {Button, Icon, Label, Loader, Message, Segment, Popup} from 'semantic-ui-react';
 
 import {RequestConfirmDelete} from 'indico/react/components';
@@ -51,6 +52,9 @@ export default function TagManager({
   canEditTag,
   editDisabledReason,
   confirmDeleteText,
+  hasColors,
+  extraFields,
+  addButtonContainer,
 }) {
   const [state, dispatch] = useReducer(tagsReducer, initialState);
 
@@ -77,11 +81,28 @@ export default function TagManager({
   }
 
   const {operation, tag: currentTag} = state;
+  const addButton = (
+    <Button
+      onClick={() => dispatch({type: 'ADD_TAG'})}
+      disabled={!!operation}
+      floated={addButtonContainer ? undefined : 'right'}
+      icon="plus"
+      content={addTagLabel}
+      primary
+    />
+  );
+  const addButtonNode = addButtonContainer
+    ? ReactDOM.createPortal(addButton, addButtonContainer)
+    : addButton;
   return (
     <div styleName="tags-container">
       {tags.map(tag => (
         <Segment key={tag.id} styleName="tag-segment">
-          <Label color={tag.color}>{tag.verboseTitle}</Label>
+          {hasColors ? (
+            <Label color={tag.color}>{tag.verboseTitle}</Label>
+          ) : (
+            <strong>{tag.verboseTitle}</strong>
+          )}
           <div styleName="tag-actions">
             <Popup
               on="hover"
@@ -117,14 +138,7 @@ export default function TagManager({
         </Segment>
       ))}
       {tags.length === 0 && <Message info content={noTagsMessage} />}
-      <Button
-        onClick={() => dispatch({type: 'ADD_TAG'})}
-        disabled={!!operation}
-        floated="right"
-        icon="plus"
-        content={addTagLabel}
-        primary
-      />
+      {addButtonNode}
       {['add', 'edit'].includes(operation) && (
         <TagModal
           header={operation === 'edit' ? editTagLabel : createTagLabel}
@@ -137,6 +151,8 @@ export default function TagManager({
           }}
           tag={currentTag}
           onClose={() => dispatch({type: 'CLEAR'})}
+          hasColors={hasColors}
+          extraFields={extraFields}
         />
       )}
       <RequestConfirmDelete
@@ -164,6 +180,9 @@ TagManager.propTypes = {
   canEditTag: PropTypes.func,
   editDisabledReason: PropTypes.string,
   confirmDeleteText: PropTypes.func,
+  hasColors: PropTypes.bool,
+  extraFields: PropTypes.node,
+  addButtonContainer: PropTypes.instanceOf(Element),
 };
 
 TagManager.defaultProps = {
@@ -182,4 +201,7 @@ TagManager.defaultProps = {
       <Param name="tag" value={tag.verboseTitle} wrapper={<strong />} />?
     </Translate>
   ),
+  hasColors: true,
+  extraFields: null,
+  addButtonContainer: null,
 };
