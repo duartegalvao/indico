@@ -56,6 +56,8 @@ Bugfixes
   thanks :user:`jbtwist`)
 - Fix validation error when choosing exactly the maximum date in a regform date field
   (:pr:`7288`)
+- Enforce DNS checks on emails only when inviting a new user, and not when importing
+  from CSV (:pr:`7291`, thanks :user:`duartegalvao, unconventionaldotdev`)
 
 Accessibility
 ^^^^^^^^^^^^^
