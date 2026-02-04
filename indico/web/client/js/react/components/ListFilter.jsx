@@ -130,7 +130,8 @@ export default function ListFilter({
     } else if (optionObject.exclusive) {
       selectedOptions = {[optionValue]: optionObject};
     } else {
-      selectedOptions = {...selectedOptions, [optionValue]: optionObject};
+      const nonExclusiveOptions = _.pickBy(selectedOptions, o => !o.exclusive);
+      selectedOptions = {...nonExclusiveOptions, [optionValue]: optionObject};
     }
     setFilters({...filters, [filterKey]: selectedOptions});
   };
