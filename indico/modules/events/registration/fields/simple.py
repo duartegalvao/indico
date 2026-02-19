@@ -10,12 +10,14 @@ from calendar import monthrange
 from datetime import date, datetime
 from decimal import Decimal
 
-from marshmallow import ValidationError, fields, pre_load, validate, validates_schema
+from marshmallow import INCLUDE, ValidationError, fields, pre_load, validate, validates_schema
 from PIL import Image
 
+from indico.core.db import db
 from indico.modules.events.registration.fields.base import (BillableFieldDataSchema, FieldSetupSchemaBase,
                                                             LimitedPlacesBillableFieldDataSchema,
                                                             RegistrationFormBillableField, RegistrationFormFieldBase)
+from indico.modules.events.registration.models.registrations import RegistrationData
 from indico.modules.files.models.files import File
 from indico.util.countries import get_countries, get_country
 from indico.util.date_time import strftime_all_years

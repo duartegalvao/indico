@@ -89,7 +89,7 @@ class PersonalDataType(IndicoIntEnum):
             }),
             (cls.affiliation, {
                 'title': cls.affiliation.get_title(),
-                'input_type': 'text',
+                'input_type': 'affiliation',
                 'position': 4
             }),
             # Fields disabled by default start in position 1000 to avoid problems reordering

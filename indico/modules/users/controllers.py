@@ -58,8 +58,9 @@ from indico.modules.users.schemas import (AffiliationArgs, AffiliationSchema, Ba
 from indico.modules.users.util import (GravatarError, get_avatar_url_from_name, get_gravatar_for_user,
                                        get_linked_events, get_mastodon_server_name, get_related_categories,
                                        get_suggested_categories, get_unlisted_events, get_user_by_email,
-                                       get_user_titles, log_user_update, merge_users, search_affiliations, search_users,
-                                       send_avatar, serialize_user, set_user_avatar)
+                                       get_user_titles, log_user_update, merge_users, search_affiliations,
+                                       search_affiliations_with_context, search_users, send_avatar, serialize_user,
+                                       set_user_avatar)
 from indico.modules.users.views import (WPAffiliationsDashboard, WPUser, WPUserDashboard, WPUserDataExport,
                                         WPUserFavorites, WPUserPersonalData, WPUserProfilePic, WPUsersAdmin)
 from indico.util.countries import get_countries
