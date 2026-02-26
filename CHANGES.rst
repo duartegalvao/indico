@@ -17,6 +17,7 @@ Improvements
 - Add internal name for registration form fields (:pr:`7276`, :pr:`7485`, thanks
   :user:`tomako`)
 - Add a "Code" (short name) to predefined affiliations (:pr:`7400`, thanks
+- Add "Affiliation" field type to regforms (:pr:`7352`, thanks
   :user:`duartegalvao, unconventionaldotdev`)
 - Track the last modified timestamp of registrations (:pr:`7478`, thanks :user:`jbtwist`)
 - Pre-fill the registration form picture field with the user's custom profile
