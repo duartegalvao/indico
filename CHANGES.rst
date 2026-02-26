@@ -16,6 +16,7 @@ Improvements
   (:pr:`7419`, thanks :user:`moliholy, unconventionaldotdev`)
 - Add internal name for registration form fields (:pr:`7276`, thanks :user:`tomako`)
 - Add a "Code" (short name) to predefined affiliations (:pr:`7400`, thanks
+- Add "Affiliation" field type to regforms (:pr:`7352`, thanks
   :user:`duartegalvao, unconventionaldotdev`)
 
 Bugfixes
