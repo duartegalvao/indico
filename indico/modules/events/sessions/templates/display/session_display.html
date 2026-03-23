@@ -103,7 +103,7 @@
                                     {% endif %}
                                     {% if convener.affiliation %}
                                         <span class="affiliation">
-                                            <span class="text">({{ render_affiliation(convener) }})</span>
+                                            <span class="text">({{ render_affiliation(convener, use_dash=true) }})</span>
                                         </span>
                                     {% endif %}
                                 </li>

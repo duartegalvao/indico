@@ -41,7 +41,7 @@
                 {% endif %}
                 {% if user_data.affiliation -%}
                     <span class="affiliation">
-                        <span class="text">({{ render_affiliation(user_data) }})</span>
+                        <span class="text">({{ render_affiliation(user_data, use_dash=true) }})</span>
                     </span>
                 {%- endif %}
             </span>

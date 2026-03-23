@@ -315,7 +315,7 @@
                             {{ user.full_name }}
                             {% if user.affiliation %}
                                 <span class="affiliation">
-                                    <span class="text">({{ render_affiliation(user) }})</span>
+                                    <span class="text">({{ render_affiliation(user, use_dash=true) }})</span>
                                 </span>
                             {% endif %}
                         </span>
@@ -340,7 +340,7 @@
                             {{ user.full_name }}
                             {% if user.affiliation %}
                                 <span class="affiliation">
-                                    <span class="text">({{ render_affiliation(user) }})</span>
+                                    <span class="text">({{ render_affiliation(user, use_dash=true) }})</span>
                                 </span>
                             {% endif %}
                         </span>
@@ -365,7 +365,7 @@
                             {{ user.full_name }}
                             {% if user.affiliation %}
                                 <span class="affiliation">
-                                    <span class="text">({{ render_affiliation(user) }})</span>
+                                    <span class="text">({{ render_affiliation(user, use_dash=true) }})</span>
                                 </span>
                             {% endif %}
                         </span>

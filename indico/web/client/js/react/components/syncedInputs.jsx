@@ -146,11 +146,19 @@ export function SyncedFinalAffiliationDropdown({
     return city || countryName;
   };
 
+  const formatAffiliationName = ({name, code}) => (code ? `${name} (${code})` : name);
+
   const affiliationOptions = affiliationResults.map(res => ({
     key: res.id,
     value: res.id,
-    text: `${res.name} `, // XXX: the space allows addition even if the entered text matches a result item
-    content: <Header style={{fontSize: 14}} content={res.name} subheader={getSubheader(res)} />,
+    text: `${formatAffiliationName(res)} `, // XXX: the space allows addition even if the entered text matches a result item
+    content: (
+      <Header
+        style={{fontSize: 14}}
+        content={formatAffiliationName(res)}
+        subheader={getSubheader(res)}
+      />
+    ),
   }));
 
   const searchAffiliationChange = async (evt, {searchQuery}) => {
