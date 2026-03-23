@@ -187,7 +187,7 @@ def _rebuild_menu(event):
     top_data, child_data = _get_split_signal_entries()
     pos_gen = count()
     entries = [_build_menu_entry(event, True, data, next(pos_gen), children=child_data.get(data.name))
-               for name, data in top_data.items()]
+               for data in top_data.values()]
     return _save_menu_entries(entries)
 
 
@@ -266,7 +266,7 @@ def _build_transient_menu(event):
     top_data, child_data = _get_split_signal_entries()
     pos_gen = count()
     return [_build_menu_entry(event, False, data, next(pos_gen), children=child_data.get(data.name))
-            for name, data in top_data.items()
+            for data in top_data.values()
             if data.parent is None]
 
 

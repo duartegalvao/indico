@@ -40,7 +40,7 @@ _columns_for_types = {
 
 
 def _make_checks():
-    available_columns = set(chain.from_iterable(cols for type_, cols in _columns_for_types.items()))
+    available_columns = set(chain.from_iterable(cols for cols in _columns_for_types.values()))
     for link_type in VCRoomLinkType:
         required_cols = available_columns & _columns_for_types[link_type]
         forbidden_cols = available_columns - required_cols

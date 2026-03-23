@@ -119,7 +119,7 @@ def get_permissions_info(_type):
             'description': special_permissions[FULL_ACCESS_PERMISSION]['description'],
             'children': {
                 perm.name: {'title': perm.friendly_name, 'description': perm.description}
-                for name, perm in selectable_permissions.items()
+                for perm in selectable_permissions.values()
             }
         },
         READ_ACCESS_PERMISSION: {
@@ -233,8 +233,7 @@ def update_principals_permissions(obj, current, new):
     :param current: A dict mapping principals to a set with its current permissions
     :param new: A dict mapping principals to a set with its new permissions
     """
-    user_selectable_permissions = {v.name for k, v in get_available_permissions(type(obj)).items()
-                                   if v.user_selectable}
+    user_selectable_permissions = {v.name for v in get_available_permissions(type(obj)).values() if v.user_selectable}
     for principal, permissions in current.items():
         if principal not in new:
             permissions_kwargs = {

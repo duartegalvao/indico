@@ -43,7 +43,8 @@ def indico_request(path):
     data = build_indico_request(path, params, app.config['INDICO_API_KEY'], app.config['INDICO_SECRET_KEY'])
     request_args = {'params': data} if method == 'GET' else {'data': data}
     try:
-        response = requests.request(method, app.config['INDICO_URL'] + path, verify=False, **request_args)
+        response = requests.request(method, app.config['INDICO_URL'] + path, verify=app.config['INDICO_VERIFY_CERT'],
+                                    **request_args)
     except requests.HTTPError as e:
         response = e.response
     except requests.ConnectionError as e:
@@ -76,6 +77,7 @@ def main():
     parser.add_option('-p', '--port', type='int', dest='port', default=10081,
                       help='Port to listen on')
     parser.add_option('-d', '--debug', action='store_true', dest='debug', help='Debug mode')
+    parser.add_option('--insecure', action='store_true', dest='insecure', help='Do not verify TLS certs')
     parser.add_option('--force-evalex', action='store_true', dest='evalex',
                       help='Enable evalex (remote code execution) even when listening on a host '
                            'that is not localhost - use with care!')
@@ -104,6 +106,7 @@ def main():
     app.config['INDICO_URL'] = options.indico_url.rstrip('/')
     app.config['INDICO_API_KEY'] = options.api_key
     app.config['INDICO_SECRET_KEY'] = options.secret_key
+    app.config['INDICO_VERIFY_CERT'] = not options.insecure
 
     print(' * Using indico at {}'.format(app.config['INDICO_URL']))
     print(' * To use this script, simply append a valid Indico HTTP API request to the URL shown below. '
