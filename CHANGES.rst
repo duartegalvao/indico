@@ -7,6 +7,23 @@ Version 3.3.12
 
 *Unreleased*
 
+Security fixes
+^^^^^^^^^^^^^^
+
+- Fix LaTeX sanitization to prevent malicious users from running unsafe LaTeX commands
+  through specially crafted abstracts or contribution descriptions, which could lead to
+  the **disclosure of local file contents** or **remote code execution** due to additional
+  vulnerabilities in TeXLive (:cve:`2026-33046`)
+
+  It is highly recommended that you run LaTeX builds in a container; see
+  :ref:`the upgrade docs <upgrade-3-to-312>` on how to do this.
+
+.. note::
+
+    If you do not use server-side LaTeX features, then you are not affected by this
+    vulnerability. You can check whether ``XELATEX_PATH`` is set in ``indico.conf``;
+    if it is, then the vulnerability affects you.
+
 Improvements
 ^^^^^^^^^^^^
 
