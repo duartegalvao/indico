@@ -10,7 +10,8 @@ Version 3.3.13
 Improvements
 ^^^^^^^^^^^^
 
-- Nothing so far :(
+- Add a "Code" column to predefined affiliations (:pr:`7400`, thanks
+  :user:`duartegalvao, unconventionaldotdev`)
 
 Bugfixes
 ^^^^^^^^
