@@ -108,7 +108,7 @@ def load_notices():
     if not config.SYSTEM_NOTICES_URL:
         return None
     try:
-        resp = requests.get(config.SYSTEM_NOTICES_URL)
+        resp = requests.get(config.SYSTEM_NOTICES_URL, headers={'User-Agent': f'Indico/{indico.__version__}'})
         resp.raise_for_status()
     except requests.RequestException:
         logger.exception('Could not fetch notices')
