@@ -65,6 +65,7 @@ from indico.modules.events.util import ZipGeneratorMixin
 from indico.modules.logs import LogKind
 from indico.modules.logs.util import make_diff_log
 from indico.modules.receipts.models.files import ReceiptFile
+from indico.modules.users.models.affiliations import Affiliation
 from indico.util.date_time import format_currency, now_utc, relativedelta
 from indico.util.fs import secure_filename
 from indico.util.i18n import _, ngettext
@@ -423,10 +424,12 @@ class RHRegistrationCreate(RHManageRegFormBase):
         user_data = self._get_user_data()
         initial_values = get_initial_form_values(self.regform, management=True) | user_data
         form_data = get_flat_section_submission_data(self.regform, management=True)
+        has_predefined_affiliations = Affiliation.query.filter_by(is_deleted=False).has_rows()
         return WPManageRegistration.render_template('display/regform_display.html', self.event,
                                                     regform=self.regform,
                                                     form_data=form_data,
                                                     initial_values=initial_values,
+                                                    has_predefined_affiliations=has_predefined_affiliations,
                                                     invitation=None,
                                                     registration=None,
                                                     management=True,
